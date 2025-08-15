@@ -1,0 +1,11 @@
+.help-overlay {
+  position: fixed;
+  top: 10%;
+  right: 10%;
+  width: 300px;
+  padding: 20px;
+  background: rgb(235, 9, 9);
+  border: 2px solid black;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  z-index: 1000;
+}

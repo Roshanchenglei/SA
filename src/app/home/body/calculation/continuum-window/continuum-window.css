@@ -1,0 +1,41 @@
+body{
+    #plot {
+  width: 100%;
+  height: 500px;
+}
+input[type="text"] {
+  width: 400px;
+}
+.controls {
+  margin: 20px 0;
+}
+
+
+.snr-table-container {
+  margin-top: 20px;
+}
+
+.snr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.snr-table th,
+.snr-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.snr-table th {
+  background-color: #f2f2f2;
+}
+display: block;
+padding: 1rem;
+background-color: #f9f9f9;
+height: 100%; /* take up full available height from flex */
+box-sizing: border-box;
+
+}
+

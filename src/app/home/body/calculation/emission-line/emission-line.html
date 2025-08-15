@@ -1,0 +1,136 @@
+<button (click)="toggleHelp()">Help</button>
+<div class="container">
+  <section>
+    <input type="text" [(ngModel)]="NGC" placeholder="Enter your Active galxy name">
+    <p>Your Active galaxy is <U> <b>{{ NGC }}</b></U></p>
+  </section>
+
+  <!-- File Upload -->
+  <section>
+    <h2>1. Upload Spectrum File</h2>
+    <input type="file" (change)="onFileUpload($event)" accept=".txt" />
+  </section>
+
+  <!-- Continuum Fit -->
+  <section>
+    <h2>2. Continuum Fit</h2>
+    <label>Continuum Ranges (e.g. 158:188,242:278,443:488,543:555):</label>
+    <input type="text" [(ngModel)]="continuumRanges" />
+
+    <button (click)="processContinuum()">Fit Continuum</button>
+
+    <div *ngIf="fitStats">
+      <h4>Fit Results:</h4>
+      <ul>
+        <li>Spectral Index: {{ fitStats.spectralIndex }} ± {{ fitStats.spectralIndexError }}</li>
+        <li>Amplitude: {{ fitStats.amplitude }} ± {{ fitStats.amplitudeError }}</li>
+        
+      </ul>
+    </div>
+
+
+    
+  </section>
+
+  <!-- Continuum Plot -->
+  <section>
+    <div id="continuumPlot" style="width: 100%; height: 500px;"></div>
+  </section>
+
+  <!-- Emission Line Parameters -->
+   <section>
+    <input type="text" [(ngModel)]="line" placeholder="Enter your emission line">
+    <p>Your emission line is <U> <b>{{ line }}</b></U></p>
+  </section>
+  <section>
+    <h2>3. Emission Line Gaussian Fit</h2>
+    <div class="gaussian-inputs">
+      <h4>Broad Component</h4>
+      <label>A1: <input type="number" [(ngModel)]="input.a1" /></label>
+      <label>B1: <input type="number" [(ngModel)]="input.b1" /></label>
+      <label>C1: <input type="number" [(ngModel)]="input.c1" /></label>
+
+      <h4>Narrow Component</h4>
+      <label>A2: <input type="number" [(ngModel)]="input.a2" /></label>
+      <label>B2: <input type="number" [(ngModel)]="input.b2" /></label>
+      <label>C2: <input type="number" [(ngModel)]="input.c2" /></label>
+
+      <h4>Analysis Limits</h4>
+      <label>Lower Limit: <input type="number" [(ngModel)]="input.lower_limit" /></label>
+      <label>Upper Limit: <input type="number" [(ngModel)]="input.upper_limit" /></label>
+      <label>Rest Wavelength (Å): <input type="number" [(ngModel)]="input.rest_wavelength" /></label>
+
+      <button (click)="computeEmissionLine()">Plot Fit</button>
+      <button (click)="analyze()">Analyze Emission Line</button>
+      
+    </div>
+  </section>
+
+  <!-- Emission Line Plot -->
+  <section>
+    <div id="emissionPlot" style="width: 100%; height: 500px;"></div>
+  </section>
+
+  <div id="residualPlot"></div>
+  
+  <!-- Results -->
+  <section *ngIf="analysisResults">
+    <h2>4. Emission Line Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Broad</th>
+          <th>Narrow</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Flux</td>
+          <td>{{ analysisResults.fluxBroad }} ± {{ analysisResults.fluxErrBroad }}</td>
+          <td>{{ analysisResults.fluxNarrow }} ± {{ analysisResults.fluxErrNarrow }}</td>
+        </tr>
+        <tr>
+          <td>EW (Å)</td>
+          <td>{{ analysisResults.ewBroad }} </td>
+          <td>{{ analysisResults.ewNarrow }}</td>
+        </tr>
+        <tr>
+          <td>FWHM (Å)</td>
+          <td>{{ analysisResults.fwhmAngBroad }}</td>
+          <td>{{ analysisResults.fwhmAngNarrow }}</td>
+        </tr>
+        <tr>
+          <td>FWHM (km/s)</td>
+          <td>{{ analysisResults.fwhmKmBroad }}</td>
+          <td>{{ analysisResults.fwhmKmNarrow }}</td>
+        </tr>
+        <tr>
+          <td>Total EW (Å)</td>
+          <td colspan="2">{{ analysisResults.total_ew }}</td>
+        </tr>
+        <tr>
+          <td>Total Flux</td>
+          <td colspan="2">{{ analysisResults.flux_total }}± {{ analysisResults.fluxErrTotal }}</td>
+        </tr>
+        <tr>
+          <td>Reduced Chi²</td>
+          <td colspan="2">{{ analysisResults.chiSquared }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<!-- help-->
+<div *ngIf="showHelp" class="help-backdrop" (click)="closeHelp()">
+  <app-teach
+    [title]="'Help'"
+    [content]="'Most common UV-emission lines in AGNs:
+    Lyα (1216 Å), N V (1240), Si IV (1393 Å) ,C IV (1548 Å, 1550 Å),He II (1640 Å), N III] (1750 Å), Si III] (1883 Å, 1892 Å), C III] (1907 Å, 1909 Å), Mg II (2796 Å and 2803 Å)
+    ,[O II] (3727 Å), [O II] (3727 Å), [Ne III] (3869 Å), He II (4686 Å), [O III] (4959 Å and 5007 Å), [N II] (6548 Å and 6583 Å), [S II] (6716 Å and 6731 Å)'"
+    (closeHelp)="closeHelp()"
+    (click)="$event.stopPropagation()"
+  ></app-teach>
+</div>
+

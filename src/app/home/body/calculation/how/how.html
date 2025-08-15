@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <h2>IRAF-Based Workflow</h2>
+  <p>
+    This website primarily focuses on the analysis of astronomical data using <strong>IRAF</strong> (Image Reduction and Analysis Facility). In my workflow, 
+    I begin by downloading spectral data from the <strong>IUE MAST</strong> (Mikulski Archive for Space Telescopes). Once the data is obtained, I convert it into <strong>.fits</strong> (Flexible Image 
+    Transport System) format to make it compatible with IRAF and other astronomical analysis tools. The detailed conversion procedure is outlined below.
+  </p>
+  <h2>
+    Format of Analyzable Data
+  </h2>
+  <p>
+    FITS format is the most commonly used format in astronomy for multi-purpose tasks like digital storage, transmission, and data processing. This format was 
+    specifically designed for storage of human-readable ASCII (American Standard Code for Information Interchange) header, which includes information related to 
+    the observation like date of observation, the time of observation, the exposure time for that object, the basic details of the object in both the photometric 
+    and spectroscopy data files. Analysis of data in the FITS format is possible in many programming languages used in astrophysics like C, C++, Fortran, IDL 
+    (Interactive Data Language), Julia, MATLAB (Matrix Laboratory), Python, Rand many more.
+  </p>
+  <h2>
+    Conversion to standard format
+  </h2>
+  <p>
+    The spectral data obtained by the IUE satellite were initially processed using IUESIPS (IUE Spectral Image Processing System) software from the time of the 
+    launch of the satellite on January 26,1978. With the archived data, it became increasingly necessary for the data to be processed uniformly and calibrated 
+    uniformly to be archived as the final product of the IUE mission. Hence NEWSIPS (New Spectral Image Processing System) was developed to produce a final uniform 
+    archival data (Garhart et al., 1997; Nichols, 1997; Nichols and Linsky, 1996), for all observed objects by IUE via a standard pipeline-processing and is the 
+    second and final processing system used to calibrate IUE data resulting in an improvement in the spectral (data) calibration, signal-to-noise ratio (snr), and 
+    homogeneity for IUE data than the earlier IUESIPS processed data. 
+  </p>
+  <p>
+    The advantages of using NEWSIPS over IUESIPS are the followings:
+  </p>
+  <p>
+    A great improvement is seen in the snr (signal to noise ratio) value of the spectrum while flux is conserved. Approximately 10-50% increase in the value of snr 
+    than the earlier processed spectra using IUESIPS.
+  </p>
+  <p>
+    Contribution due to cosmic rays is automatically removed.
+  </p>
+  <p>
+    The final spectrum will include an output for error estimated for each point in the flux spectrum.
+  </p>
+  <p>
+    NEWSIPS algorithms mainly included a background removal algorithm that determines the background level of each high-dispersion image by fitting, in succession, 
+    one-dimensional Chebyshev low/high-dispersion spectral data are available order-by-order with wavelengths uniform sampled within an order. This set of new 
+    processing algorithms in NEWSIPS has shown a significant improvement in the snr value of the processed datal, i.e. nearly up to 10-50% for most images 
+    (Nichols-Bohlin, 1990).
+  </p>
+  <h2>
+    IUETOOLS
+  </h2>
+  <p>
+    Once the data is downloaded it is still not ready for scientific analysis. Hence it has to be run through IUETOOLS to convert it into the standard format for 
+    analyzing astronomical data, i.e. <b><u><i>filename.</i></u></b> fits format through IRAF. The IUETOOLS package contains useful tools to perform data format conversion on the 
+    NEWSIPS IUE final archival data. The data files processed by the NEWSIPS pipeline- processing software is in the <b><u><i>filename.mxlo </i></u></b> or <b><u><i>filename.mxhi</i></u></b> format which 
+    basically consists of the extracted spectra that is calibrated for wavelengths, the data flags for any and noise estimates in the form of binary tables. These 
+    have to be converted to the standard <b><u><i>filename.fits</i></u></b> format. The procedure to integrate IUETOOLS with IRAF is followed from the STScl web- site and a brief 
+    description of the same is given below.
+  </p>
+  <ol>
+    <li>Copy the <code>iuetools.tar</code> file to a suitable directory and unpack it:
+      <pre>tar xvf iuetools.tar</pre>
+    </li>
+    <li>Compile the source code by starting an IRAF session:
+      <pre>
+        cl&gt; ed /home/uetools/     # If files are extracted to ~/uetools
+        cl&gt; mkpkg -p tables update
+      </pre>
+    </li>
+    <li>Build the IUETOOLS package:
+      <pre>
+        cl&gt; softools
+        cl&gt; ed /home/iuetools/lib/
+        cl&gt; mkhelpdb root.hd helpdb.mip
+      </pre>
+    </li>
+  </ol>
+
+  <h2>Loading and Running IUETOOLS in IRAF</h2>
+
+  <ol>
+    <li>Start IRAF using:
+      <pre>
+        $ xgterm &amp;
+        $ cl       # or ecl
+      </pre>
+    </li>
+    <li>Set and load the IUETOOLS package:
+      <pre>
+        cl&gt; set iuetools = /home/iuetools/
+        cl&gt; cd iuetools$
+        cl&gt; task iuetools.pkg = iuetools$iuetools.cl
+        cl&gt; iuetools
+      </pre>
+    </li>
+    <li>To load IUETOOLS automatically at IRAF startup, edit your <code>loginuser.cl</code> file and add:
+      <pre>
+        set iuetools = "/home/iuetools/"
+        task iuetools.pkg = "iuetools$iuetools.cl"
+        reset helpdb = (envget("helpdb") // ",iuetools$lib/helpdb.mip")
+      </pre>
+    </li>
+  </ol>
+
+  <h2>About IUETOOLS Tasks</h2>
+
+  <ul>
+    <li><strong>mxexpand:</strong> Computes the wavelength array from FITS headers and generates .fits files compatible with STSDAS and TABLES tasks.</li>
+    <li><strong>mxtomultispec:</strong> Extracts spectra from FITS binary tables created by <code>mxexpand</code> and outputs a multispec 2D format usable in 
+        <code>specred</code> package.</li>
+  </ul>
+
+  <h2>Using IUETOOLS to Convert Files</h2>
+
+  <ol>
+    <li>Start IRAF session again if needed:
+      <pre>
+        $ xgterm &amp;
+        $ ecl
+      </pre>
+    </li>
+    <li>Load IUETOOLS:
+      <pre>
+        cl&gt; iuetools
+      </pre>
+    </li>
+    <li>Navigate to your data directory:
+      <pre>
+        iuetools&gt; cd /home/object
+        iuetools&gt; ls
+        iuetools&gt; ls *.mxlo &gt; mxlo.dat
+      </pre>
+    </li>
+    <li>Run <code>mxexpand</code> using a parameter file:
+      <pre>
+        iuetools&gt; epar mxexpand
+        intable = &#64;mxlo.dat     # Set this in the parameter editor
+      </pre>
+    </li>
+  </ol>
+  <h2>Step 4: Convert All FITS Files to 2D Format</h2>
+  <pre>
+    iuetools&gt; !ls *.fits &gt; fits.dat
+    iuetools&gt; epar mxtomultispec
+
+    # In the parameter editor:
+    Input  = &#64;fits.dat
+    Output = 2d//&#64;fits.dat
+    Shift  = go    (just press Enter to accept)
+  </pre>
+  <h2>Step 5: Final Notes Before Scientific Analysis</h2>
+  <p>
+    This process converts the entire dataset to 2D format by prefixing the output FITS filenames with <code>2d</code>. Once the tiles are converted to 
+    the <code>2d.fits</code> format, they are ready for scientific analysis using IRAF.
+  </p>
+  <p>
+    However, before proceeding with any detailed scientific analysis, it is essential to apply certain corrections to the data files. These corrections may include 
+    flat-fielding, wavelength calibration, flux normalization, or background subtraction depending on your analysis requirements.
+  </p>
+  <h2>Step 6: Correcting for Galactic Reddening using <code>dered</code></h2>
+  <p>
+    The IRAF task <code>dered</code> is used to correct spectral data for the effects of Galactic reddening. This step is necessary before analyzing the physical 
+    properties of astronomical sources.
+  </p>
+  <pre>
+    iuetools&gt; ls 2d*.fits &gt; dered.dat
+    iuetools&gt; epar dered
+
+    # In the parameter editor:
+    Input   = &#64;dered.dat
+    Output  = dr//&#64;dered.dat
+    R value = E(B-V)
+    A(V)/E(B-V) = 5.0
+    Shift   = go    (press Enter)
+  </pre>
+  <h2>Step 7: Correcting for Doppler Shift using <code>dopcor</code></h2>
+  <p>
+    The IRAF task <code>dopcor</code> applies a redshift correction to spectral data by shifting wavelengths based on a specified redshift value. This is essential 
+    for transforming observed spectra into the rest frame of the object.
+  </p>
+  <pre>
+    iuetools&gt; ls dr2d*.fits &gt; dopcor.dat
+    iuetools&gt; epar dopcor
+
+    # In the parameter editor:
+    Input     = &#64;dopcor.dat
+    Output    = de//&#64;dopcor.dat
+    Redshift  = [specify your redshift value, e.g., 0.031]
+    # All other parameters remain unchanged.
+    Shift     = go    (press Enter)
+  </pre>
+  <p> 
+    "After correcting for the Doppler shift, the <i><b>.fits</b></i> file needs to be converted to a <i><b>.txt</b></i> format. You can follow the tutorial in the video below."
+  </p>
+  <div class="youtube-container" (click)="loadVideo()">
+  <ng-container *ngIf="!isIframeLoaded; else showIframe">
+    <img src="https://img.youtube.com/vi/e3vbzEUQw-0/hqdefault.jpg" alt="YouTube Thumbnail" class="youtube-thumbnail" />
+    <div class="play-button">▶</div>
+  </ng-container>
+
+  <ng-template #showIframe>
+    <iframe
+      width="560"
+      height="315"
+      src="https://www.youtube.com/embed/e3vbzEUQw-0?autoplay=1"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </ng-template>
+</div>
+
+
+
+</body>
+</html>
+

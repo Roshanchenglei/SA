@@ -1,0 +1,74 @@
+body, .font, .font1 {
+  font-size: xx-small;
+  padding: 10px;
+  color: white;
+  background-color: #121212;
+}
+
+/* Facebook Button */
+.facebook-button {
+  display: inline-block;
+  padding: 5px 20px;
+  color: white;
+  background-color: #3b5998;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.facebook-button:hover {
+  background-color: #2d4373;
+}
+
+/* Quick Link Section */
+.link1 {
+  text-align: center;
+  font-size: xx-small;
+}
+
+.link1 a {
+  color: red;
+}
+
+/* Footer Styling */
+.footer {
+  position: relative;
+  color: white;
+  padding: 0%;
+}
+
+/* Footer Text Positioning */
+.right-text {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  font-size: xx-small;
+  color: white;
+}
+
+/* Top Row Layout for Facebook + Feedback */
+.social-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Feedback Button Styling */
+.feed button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: xx-small;
+  cursor: pointer;
+}
+
+.feed button:hover {
+  background-color: #0056b3;
+}
+.link2{
+  text-align: left;
+}

@@ -1,0 +1,54 @@
+<body>
+  <div class="button-container">
+
+    <section>
+    <input type="text" [(ngModel)]="NGC" placeholder="Enter your Active galxy name">
+    <p>Your Active galaxy is <U> <b>{{ NGC }}</b></U></p>
+  </section>
+    
+    <input type="file" (change)="onFileUpload($event)" />
+    <br>
+    <label>Enter Continuum Ranges (e.g., 158:188,242:278,443:488,543:555):</label>
+    <input type="text" [(ngModel)]="continuumRanges" placeholder="Start:End,Start:End,...">
+    <br>
+    <button (click)="processContinuum()">Fit Continuum window</button>
+    <button (click)="continueAnalysis()">click for result</button>
+    </div>
+
+<div id="continuumPlot" style="width: 100%; height: 500px;"></div>
+
+<div *ngIf="snrResults.length > 0">
+  <h3>SNR Table</h3>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Window</th>
+        <th>Favg</th>
+        <th>Ferr</th>
+        <th>Frms</th>
+        <th>SNR</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of snrResults">
+        <td>{{ row.label }}</td>
+        <td>{{ row.Favg }}</td>
+        <td>{{ row.Ferr }}</td>
+        <td>{{ row.Frms }}</td>
+        <td>{{ row.SNR }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="fitStats" class="fit-stats">
+  <h3>Fit Parameters</h3>
+  <table>
+    <tr><td>Spectral Index (α):</td><td>{{ fitStats.spectralIndex }} ± {{ fitStats.spectralIndexError }}</td></tr>
+    <tr><td>Amplitude (A):</td><td>{{ fitStats.amplitude }} ± {{ fitStats.amplitudeError }}</td></tr>
+  </table>
+</div>
+
+
+
+</body>
+

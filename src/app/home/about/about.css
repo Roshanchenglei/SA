@@ -1,0 +1,11 @@
+body{
+    text-align: justify;
+}
+.image-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fig{
+    text-align: center;
+}

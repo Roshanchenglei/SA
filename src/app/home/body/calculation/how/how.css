@@ -1,0 +1,27 @@
+body{
+    text-align: justify;
+}
+.youtube-container {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  cursor: pointer;
+  margin: 20px auto;
+}
+
+.youtube-thumbnail {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  color: white;
+  text-shadow: 0 0 10px black;
+  pointer-events: none;
+}

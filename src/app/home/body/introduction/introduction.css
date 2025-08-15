@@ -1,0 +1,15 @@
+body{
+    padding-top: 30px;
+    text-align: justify;
+}
+.image-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fig1{
+    text-align: center;
+}
+.eq1{
+    text-align: center;
+}

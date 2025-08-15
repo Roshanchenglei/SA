@@ -1,0 +1,160 @@
+<div class="container">
+
+  <!-- Help toggle -->
+  <button (click)="toggleHelp()">Help</button>
+
+  <!-- Galaxy Name -->
+  <section class="enter">
+    <input type="text" [(ngModel)]="NGC" placeholder="Enter your Active Galaxy name" />
+    <p>Your Active Galaxy is <u><b>{{ NGC }}</b></u></p>
+  </section>
+
+  <!-- File Upload -->
+  <section>
+    <h2>1. Upload Spectrum File</h2>
+    <input type="file" (change)="onFileUpload($event)" accept=".txt" />
+  </section>
+
+  <!-- Continuum Fit -->
+  <section>
+    <h2>2. Continuum Fit</h2>
+    <label>
+      Continuum Ranges (e.g. 158:188,242:278,443:488,543:555):
+      <input type="text" [(ngModel)]="continuumRanges" />
+    </label>
+    <button (click)="processContinuum()">Fit Continuum</button>
+
+    <div *ngIf="fitStats" style="margin-top: 1em;">
+      <h4>Fit Results:</h4>
+      <ul>
+        <li>Spectral Index: {{ fitStats.spectralIndex }} ± {{ fitStats.spectralIndexError }}</li>
+        <li>Amplitude: {{ fitStats.amplitude }} ± {{ fitStats.amplitudeError }}</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Continuum Plot -->
+  <section>
+    <div id="continuumPlot" style="width: 100%; height: 500px;"></div>
+  </section>
+
+  <!-- Emission Line Input -->
+  <section>
+    <input type="text" [(ngModel)]="line" placeholder="Enter your emission line" />
+    <button (click)="linesAdd()">Add</button>
+  </section>
+
+  <!-- List of Emission Lines -->
+  <section *ngIf="lines.length > 0">
+    <h3>Emission Lines:</h3>
+    <ul>
+      <li *ngFor="let l of lines; let i = index">
+        {{ l }}
+        <button (click)="removeLine(i)">Remove</button>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Gaussian Parameters with Min / Max / Actual -->
+<section>
+  <button (click)="addGaussian()">Add Gaussian</button>
+  <div *ngFor="let g of input.gaussians; let i = index" style="margin: 1rem 0; border: 1px solid #ccc; padding: 0.5rem;">
+    <h4>Gaussian {{ i + 1 }}</h4>
+
+    <!-- Amplitude A -->
+    <label>
+      Amplitude (Actual): <input type="number" [(ngModel)]="g.a" step="any" placeholder="eg" />
+    </label>
+    <label>
+      Amplitude (Min): <input type="number" [(ngModel)]="g.a_min" step="any" />
+    </label>
+    <label>
+      Amplitude (Max): <input type="number" [(ngModel)]="g.a_max" step="any" />
+    </label>
+
+    <!-- Center B -->
+    <label>
+      Line (Actual): <input type="number" [(ngModel)]="g.b" step="any" />
+    </label>
+    <label>
+      Line (Min): <input type="number" [(ngModel)]="g.b_min" step="any" />
+    </label>
+    <label>
+      Line (Max): <input type="number" [(ngModel)]="g.b_max" step="any" />
+    </label>
+
+    <!-- Width C -->
+    <label>
+      Sigma (Actual): <input type="number" [(ngModel)]="g.c" step="any" />
+    </label>
+    <label>
+      Sigma (Min): <input type="number" [(ngModel)]="g.c_min" step="any" />
+    </label>
+    <label>
+      Sigma (Max): <input type="number" [(ngModel)]="g.c_max" step="any" />
+    </label>
+
+    <!-- Manual integration limits -->
+    <label>
+      Min Wavelength (Å): <input type="number" [(ngModel)]="g.manualMinWavelength" step="any" />
+    </label>
+    <label>
+      Max Wavelength (Å): <input type="number" [(ngModel)]="g.manualMaxWavelength" step="any" />
+    </label>
+
+    <button (click)="removeGaussian(i)" *ngIf="input.gaussians.length > 1">Remove</button>
+  </div>
+</section>
+
+  <!-- Analyze Button -->
+  <section>
+    <button (click)="analyze()">Analyze Emission Line</button>
+  </section>
+
+  <!-- Emission Line Plot -->
+  <section>
+    <div id="emissionPlot" style="width: 100%; height: 500px;"></div>
+  </section>
+
+  <!-- Residual Plot -->
+  <section>
+    <div id="residualPlot" style="width: 100%; height: 300px;"></div>
+  </section>
+
+  <!-- Emission Line Analysis Results -->
+  <section *ngIf="analysisResults">
+    <h2>4. Emission Line Results</h2>
+    <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 800px;">
+      <thead>
+        <tr>
+          <th>Emission-Line</th>
+          <th>Flux (erg/cm²/s) ± Error</th>
+          <th>EW (Å) ± Error</th>
+          <th>FWHM (Å)</th>
+          <th>FWHM (km/s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let g of input.gaussians; let i = index">
+          <td>{{ lines[i] || ('Gaussian ' + (i + 1)) }}</td>
+          <td>{{ analysisResults.fluxes[i] }} ± {{ analysisResults.fluxErrs[i] }}</td>
+          <td>{{ analysisResults.ewIndividual[i] }} ± {{ analysisResults.ewErrIndividual[i] }}</td>
+          <td>{{ analysisResults.fwhmsAng[i] }}</td>
+          <td>{{ analysisResults.fwhmsKm[i] }}</td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<!-- Help -->
+<div *ngIf="showHelp" class="help-backdrop" (click)="closeHelp()">
+  <app-teach
+    [title]="'Help'"
+    [content]="'Most common UV-emission lines in AGNs: Lyα (1216 Å), N V (1240), Si IV (1393 Å), C IV (1548 Å, 1550 Å), He II (1640 Å), OIII] (1663 Å), N III] (1750 Å), Si III] (1883 Å, 1892 Å), C III] (1907 Å, 1909 Å), Mg II (2796 Å and 2803 Å), [O II] (3727 Å), [Ne III] (3869 Å), He II (4686 Å), [O III] (4959 Å and 5007 Å), [N II] (6548 Å and 6583 Å), [S II] (6716 Å and 6731 Å)'"
+    (closeHelp)="closeHelp()"
+    (click)="$event.stopPropagation()"
+  ></app-teach>
+</div>

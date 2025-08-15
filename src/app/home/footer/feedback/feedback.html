@@ -1,0 +1,31 @@
+<div class="feedback-container">
+  <button (click)="toggleForm()">Give Feedback</button>
+
+  <div *ngIf="showForm" class="feedback-form">
+    <h3>Feedback Form</h3>
+    
+    <label>Name:</label>
+    <input type="text" [(ngModel)]="feedback.name" required />
+
+    <label>Rating (1–5):</label>
+    <input type="number" min="1" max="5" [(ngModel)]="feedback.rating" required />
+
+    <label>Message:</label>
+    <textarea [(ngModel)]="feedback.message" required></textarea>
+
+    <button (click)="submitFeedback()">Submit</button>
+  </div>
+
+  <div *ngIf="submitted" class="thank-you">Thank you for your feedback!</div>
+
+  <h3>Feedback History</h3>
+  <div *ngIf="feedbackList.length === 0">No feedback yet.</div>
+  <ul *ngIf="feedbackList.length > 0">
+    <li *ngFor="let fb of feedbackList">
+      <strong>{{ fb.name }}</strong> rated <strong>{{ fb.rating }}/5</strong><br/>
+      <em>{{ fb.message }}</em>
+    </li>
+  </ul>
+
+  
+</div>

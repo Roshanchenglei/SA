@@ -1,0 +1,23 @@
+.button-container{
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+}
+.animated-btn {
+  padding: 12px 24px;
+  background-color: #4a90e2;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.animated-btn:hover {
+  transform: scale(1.1);
+  background-color: #357ABD;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
